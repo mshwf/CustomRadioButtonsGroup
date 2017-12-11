@@ -19,7 +19,7 @@
             <local:RadioButtonsGroup x:Name="rb2" ItemsSource="{Binding Genres}"/>
             <Label Text="{Binding Path=SelectedItem, Source={x:Reference rb2}}"/>
             <BoxView HeightRequest="50" WidthRequest="50"/>
-            <Frame OutlineColor="Red" >
+            <Frame>
                 <Label Text="Created by Mohamed Elshawaf (mshwf)"/>
             </Frame>
         </StackLayout>
