@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:CustomRadioButtonsGroup"
+             x:Class="CustomRadioButtonsGroup.MainPage" BackgroundColor="Orange">
+    <ContentPage.BindingContext>
+        <local:MainPageViewModel/>
+    </ContentPage.BindingContext>
+    <ContentPage.Content>
+        <StackLayout>
+            <local:RadioButtonsGroup x:Name="rb" ItemsSource="{Binding DevTypes}" SelectedValuePath="Id" DisplayMemberPath="Title"/>
+            <StackLayout Orientation="Horizontal">
+                <Label Text="The Id of the Selected Dev type: "/>
+                <Label Text="{Binding Path=SelectedValue, Source={x:Reference rb}}"/>
+            </StackLayout>
+
+            <BoxView HeightRequest="1" BackgroundColor="Gray"/>
+
+            <local:RadioButtonsGroup x:Name="rb2" ItemsSource="{Binding Genres}"/>
+            <Label Text="{Binding Path=SelectedItem, Source={x:Reference rb2}}"/>
+            <BoxView HeightRequest="50" WidthRequest="50"/>
+            <Frame OutlineColor="Red" >
+                <Label Text="Created by Mohamed Elshawaf (mshwf)"/>
+            </Frame>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
