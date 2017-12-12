@@ -1,27 +1,27 @@
 # CustomRadioButtonsGroup
 
-The control has:
-
 ### Properties:
-##### Property                           #### Type
-==========================================================
-``ItemsSource``                    ``IEnumerable<object>``
 
-``SelectedIndex``                  ``int``
+##### Property | Type
 
-``SelectedItem``                   ``object``
 
-``Orientation``                    ``StackOrientation``
+``ItemsSource``           |        ``IEnumerable<object>``
 
-``FrontColor``                     ``Color``
+``SelectedIndex``         |        ``int``
 
-``Direction``                      ``Directions``
+``SelectedItem``          |        ``object``
 
-``DisplayMemberPath``              ``string``
+``Orientation``           |        ``StackOrientation``
 
-``SelectedValuePath``              ``string``
+``FrontColor``            |        ``Color``
 
-``SelectedValue``                  ``object``
+``Direction``             |        ``Directions``
+
+``DisplayMemberPath``     |        ``string``
+
+``SelectedValuePath``     |        ``string``
+
+``SelectedValue``         |        ``object``
 
 ### Events
 
