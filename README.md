@@ -2,11 +2,29 @@
 
 The control has:
 
-``ItemsSurce`` bindable property that you can pass it a list used by the control.
-and to specify the displayed property path, specify the ``DisplayMemberPath`` with a string represents the property
-name, and use ``SelectedValuePath`` to specify the property name to receive its value when selections changes
+### Properties:
+##### Property                           #### Type
+==========================================================
+``ItemsSource``                    ``IEnumerable<object>``
 
-example:
-````
-            <local:RadioButtonsGroup x:Name="rb" ItemsSource="{Binding DevTypes}" SelectedValuePath="Id" DisplayMemberPath="Title"/>
-````
+``SelectedIndex``                  ``int``
+
+``SelectedItem``                   ``object``
+
+``Orientation``                    ``StackOrientation``
+
+``FrontColor``                     ``Color``
+
+``Direction``                      ``Directions``
+
+``DisplayMemberPath``              ``string``
+
+``SelectedValuePath``              ``string``
+
+``SelectedValue``                  ``object``
+
+### Events
+
+`OnItemsAdded`
+
+`OnSelectionChanged`
