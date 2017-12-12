@@ -11,11 +11,11 @@
 
 ``SelectedItem``          |        ``object``
 
-``Orientation``           |        ``StackOrientation``
+``Orientation``           |        ``StackOrientation`` (`Horizontal`, `Vertical`)
 
 ``FrontColor``            |        ``Color``
 
-``Direction``             |        ``Directions``
+``Direction``             |        ``Directions`` (`RTL`, `LTR`)
 
 ``DisplayMemberPath``     |        ``string``
 
