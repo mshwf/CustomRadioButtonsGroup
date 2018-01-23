@@ -6,17 +6,44 @@ using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Xaml;
-//created by mshwf(github/mshwf) 08/12/2017
+
 namespace CustomRadioButtonsGroup
 {
+    public class SelectionChangedEventArgs : EventArgs
+    {
+        public object SelectedItem { get; }
+        public object SelectedValue { get; }
+        public int SelectedIndex { get; }
+        public SelectionChangedEventArgs(object selectedItem, object selectedValue, int selectedIndex)
+        {
+            SelectedItem = selectedItem;
+            SelectedIndex = selectedIndex;
+            SelectedValue = selectedValue;
+        }
+    }
 
-    [XamlCompilation(XamlCompilationOptions.Compile)]
-    public class RadioButtonsGroup : ContentView
+    public class ItemsAddedEventArgs : EventArgs
+    {
+        public IEnumerable<object> Items { get; }
+        public ItemsAddedEventArgs(IEnumerable<object> items)
+        {
+            Items = items;
+        }
+    }
+
+    public enum Directions
+    { RTL, LTR }
+
+    [XamlCompilation(XamlCompilationOptions.Compile), Obsolete]
+    public class RadioButtonsGroupUnicoded : ContentView
     {
         StackLayout parentStack;
-        List<SelectionFrame> lbRadios;
+        List<Label> lbRadios;
+        readonly string chckd = "◉";
+        readonly string unchckd = "◯";
+        readonly string rbClassId = "r";
 
-        public RadioButtonsGroup()
+        public RadioButtonsGroupUnicoded()
         {
             parentStack = new StackLayout();
             Content = parentStack;
@@ -31,9 +58,6 @@ namespace CustomRadioButtonsGroup
         public static readonly BindableProperty DisplayMemberPathProperty = BindableProperty.Create(nameof(DisplayMemberPath), typeof(string), typeof(RadioButtonsGroup));
         public static readonly BindableProperty SelectedValuePathProperty = BindableProperty.Create(nameof(SelectedValuePath), typeof(string), typeof(RadioButtonsGroup));
         public static readonly BindableProperty SelectedValueProperty = BindableProperty.Create(nameof(SelectedValue), typeof(object), typeof(RadioButtonsGroup));
-        public static readonly BindableProperty FontAttributesProperty = BindableProperty.Create(nameof(FontAttributes), typeof(FontAttributes), typeof(RadioButtonsGroup), defaultValue: FontAttributes.None);
-        public static readonly BindableProperty FontSizeProperty = BindableProperty.Create(nameof(FontSize), typeof(double), typeof(RadioButtonsGroup), defaultValue: default(double));
-        public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(RadioButtonsGroup), defaultValue: default(string));
 
         public IEnumerable<object> ItemsSource
         {
@@ -89,24 +113,6 @@ namespace CustomRadioButtonsGroup
             set { SetValue(SelectedValueProperty, value); }
         }
 
-        public FontAttributes FontAttributes
-        {
-            get { return (FontAttributes)GetValue(FontAttributesProperty); }
-            set { SetValue(FontAttributesProperty, value); }
-        }
-
-        public double FontSize
-        {
-            get { return (double)GetValue(FontSizeProperty); }
-            set { SetValue(FontSizeProperty, value); }
-        }
-
-        public string FontFamily
-        {
-            get { return (string)GetValue(FontFamilyProperty); }
-            set { SetValue(FontFamilyProperty, value); }
-        }
-
         public delegate void ItemsAddedHandler(object sender, ItemsAddedEventArgs e);
         public event ItemsAddedHandler OnItemsAdded;
 
@@ -118,7 +124,7 @@ namespace CustomRadioButtonsGroup
         {
             if (newValue == null)
                 return;
-            var @this = bindable as RadioButtonsGroup;
+            var @this = bindable as RadioButtonsGroupUnicoded;
 
             // unsubscribe from the old value
 
@@ -155,11 +161,12 @@ namespace CustomRadioButtonsGroup
 
         private void RebuildOnItemsSource()
         {
-            if (parentStack.Children.Count > 0)
-                return;
             parentStack.Orientation = Orientation;
             parentStack.HorizontalOptions = Orientation == StackOrientation.Vertical ? LayoutOptions.Center : HorizontalOptions;
             parentStack.VerticalOptions = VerticalOptions;
+            //parentStack.BackgroundColor = Color.Gray;
+            //if (Direction == Directions.RTL)
+            //    HorizontalOptions = LayoutOptions.End;
 
             var items = ItemsSource;
             if (Orientation == StackOrientation.Horizontal && Direction == Directions.RTL)
@@ -173,7 +180,9 @@ namespace CustomRadioButtonsGroup
                 {
                     Orientation = StackOrientation.Horizontal,
                     BindingContext = item,
-                    HorizontalOptions = Orientation == StackOrientation.Horizontal ? LayoutOptions.CenterAndExpand : LayoutOptions.Fill,
+                    //VerticalOptions = VerticalOptions,
+                    HorizontalOptions = /*LayoutOptions.Fill*/Orientation == StackOrientation.Horizontal ? LayoutOptions.CenterAndExpand : LayoutOptions.Fill,
+                    //BackgroundColor = Color.Orange
                 };
                 TapGestureRecognizer tap = new TapGestureRecognizer();
                 tap.Tapped += RadioChecked;
@@ -181,32 +190,23 @@ namespace CustomRadioButtonsGroup
 
                 var displayText = DisplayMemberPath == null ? item.ToString() : item.GetType().GetProperty(DisplayMemberPath).GetValue(item, null).ToString();
 
-                Label radioText = new Label
-                {
-                    Text = displayText,
-                    VerticalOptions = LayoutOptions.Center,
-                    TextColor = FrontColor,
-                    FontAttributes = FontAttributes,
-                    FontSize = FontSize,
-                    FontFamily = FontFamily
-                };
-                SelectionFrame circle = new SelectionFrame { ClassId = "r", BorderColor = FrontColor, VerticalOptions = LayoutOptions.Center };
-                InitDirection(radio, radioText, circle);
+                Label radioText = new Label { Text = displayText, VerticalOptions = LayoutOptions.Center, TextColor = FrontColor };
+                Label radioCircle = new Label { ClassId = rbClassId, Text = unchckd, TextColor = FrontColor, FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)), VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center };
+                InitDirection(radio, radioText, radioCircle);
             }
-
-            lbRadios = parentStack.Children.Where(x => x is StackLayout).SelectMany(x => ((StackLayout)x).Children.Where(l => l.ClassId == "r").Cast<SelectionFrame>()).ToList();
+            lbRadios = parentStack.Children.Where(x => x is StackLayout).SelectMany(x => ((StackLayout)x).Children.Where(l => l.ClassId == rbClassId).Cast<Label>()).ToList();
             if (Orientation == StackOrientation.Horizontal && Direction == Directions.RTL)
                 lbRadios.Reverse();
             if (SelectedIndex >= 0)
             {
                 try
                 {
-                    lbRadios[SelectedIndex].IsSelected = true;
+                    lbRadios[SelectedIndex].Text = chckd;
                 }
                 catch (ArgumentOutOfRangeException)
                 {
                     SetValue(SelectedIndexProperty, 0);
-                    lbRadios[SelectedIndex].IsSelected = true;
+                    lbRadios[SelectedIndex].Text = chckd;
                 }
             }
         }
@@ -221,7 +221,7 @@ namespace CustomRadioButtonsGroup
             OnItemsAdded?.Invoke(this, new ItemsAddedEventArgs(ItemsSource));
         }
 
-        private void InitDirection(StackLayout radio, Label radioText, SelectionFrame radioCircle)
+        private void InitDirection(StackLayout radio, Label radioText, Label radioCircle)
         {
             if (Direction == Directions.RTL)
             {
@@ -232,6 +232,7 @@ namespace CustomRadioButtonsGroup
             }
             else
             {
+                //radioText.HorizontalOptions = LayoutOptions.StartAndExpand;
                 radioCircle.HorizontalOptions = LayoutOptions.EndAndExpand;
                 radio.Children.Add(radioText);
                 radio.Children.Add(radioCircle);
@@ -242,14 +243,12 @@ namespace CustomRadioButtonsGroup
         private void RadioChecked(object sender, EventArgs e)
         {
             StackLayout stRadio = (StackLayout)sender;
-            var lb = stRadio.Children.First(x => x.ClassId == "r") as SelectionFrame;
-            if (lb is null)
-                return;
-            if (!lb.IsSelected)
+            var lb = stRadio.Children.First(x => x.ClassId == rbClassId) as Label;
+            if (lb.Text == unchckd)
             {
                 if (SelectedIndex >= 0)
-                    lbRadios.Single(x => x.IsSelected).IsSelected = false;
-                lb.IsSelected = true;
+                    lbRadios.Single(x => x.Text == chckd).Text = unchckd;
+                lb.Text = chckd;
                 SelectedItem = stRadio.BindingContext;
                 SelectedValue = SelectedValuePath == null ? null : SelectedItem.GetType().GetProperty(SelectedValuePath).GetValue(SelectedItem, null);
                 SelectedIndex = ItemsSource.ToList().IndexOf(SelectedItem);

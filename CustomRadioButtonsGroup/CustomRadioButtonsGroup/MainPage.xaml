@@ -8,6 +8,8 @@
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout>
+            <Label Text="The Frame Version" TextColor="Blue"/>
+
             <local:RadioButtonsGroup x:Name="rb" ItemsSource="{Binding DevTypes}" SelectedValuePath="Id" DisplayMemberPath="Title"/>
             <StackLayout Orientation="Horizontal">
                 <Label Text="The Id of the Selected Dev type: "/>
@@ -15,8 +17,8 @@
             </StackLayout>
 
             <BoxView HeightRequest="1" BackgroundColor="Gray"/>
-
-            <local:RadioButtonsGroup x:Name="rb2" ItemsSource="{Binding Genres}"/>
+            <Label Text="The Unicoded Version" TextColor="Blue"/>
+            <local:RadioButtonsGroupUnicoded x:Name="rb2" ItemsSource="{Binding Genres}"/>
             <Label Text="{Binding Path=SelectedItem, Source={x:Reference rb2}}"/>
             <BoxView HeightRequest="50" WidthRequest="50"/>
             <Frame>

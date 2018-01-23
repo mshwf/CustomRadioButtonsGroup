@@ -8,6 +8,10 @@ namespace CustomRadioButtonsGroup
 {
     public class MainPageViewModel
     {
+
+        public List<DevType> DevTypes { get; set; }
+        public List<string> Genres { get; set; }
+
         public MainPageViewModel()
         {
             DevTypes = new List<DevType>
@@ -20,7 +24,5 @@ namespace CustomRadioButtonsGroup
 
             Genres = new List<string> { "Female", "Male", "Prefer not to say" };
         }
-        public List<DevType> DevTypes { get; set; }
-        public List<string> Genres { get; set; }
     }
 }

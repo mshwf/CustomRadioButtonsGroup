@@ -44,7 +44,9 @@
     </Compile>
     <Compile Include="MainPageViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RadioButtonsGroupUnicoded.cs" />
     <Compile Include="RadioButtonsGroup.cs" />
+    <Compile Include="SelectionFrame.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainPage.xaml">
