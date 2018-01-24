@@ -1,5 +1,7 @@
 # CustomRadioButtonsGroup
 
+![CustomRadioButtonsGroup](https://github.com/mshwf/CustomRadioButtonsGroup/blob/master/RB.gif)
+
 ### Properties:
 
 ##### Property | Type
